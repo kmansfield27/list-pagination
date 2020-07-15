@@ -5,46 +5,94 @@ FSJS project 2 - List Filter and Pagination
    
 // Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
 
-
-/*** 
-   Add your global variables that store the DOM elements you will 
-   need to reference and/or manipulate. 
-   
-   But be mindful of which variables should be global and which 
-   should be locally scoped to one of the two main functions you're 
-   going to create. A good general rule of thumb is if the variable 
-   will only be used inside of a function, then it can be locally 
-   scoped to that function.
-***/
+document.addEventListener('DOMContentLoaded', () => {
 
 
+   /*** 
+      Add your global variables that store the DOM elements you will 
+      need to reference and/or manipulate. 
+      
+      But be mindful of which variables should be global and which 
+      should be locally scoped to one of the two main functions you're 
+      going to create. A good general rule of thumb is if the variable 
+      will only be used inside of a function, then it can be locally 
+      scoped to that function.
+   ***/
 
+   const listItems = document.getElementsByTagName('li');
+   const itemsPerPage = 10;
 
-/*** 
-   Create the `showPage` function to hide all of the items in the 
-   list except for the ten you want to show.
+   console.log(listItems);
 
-   Pro Tips: 
-     - Keep in mind that with a list of 54 students, the last page 
-       will only display four.
-     - Remember that the first student has an index of 0.
-     - Remember that a function `parameter` goes in the parens when 
-       you initially define the function, and it acts as a variable 
-       or a placeholder to represent the actual function `argument` 
-       that will be passed into the parens later when you call or 
-       "invoke" the function 
-***/
+   /*** 
+      Create the `showPage` function to hide all of the items in the 
+      list except for the ten you want to show.
 
-
-
-
-/*** 
-   Create the `appendPageLinks function` to generate, append, and add 
-   functionality to the pagination buttons.
-***/
+      Pro Tips: 
+      - Keep in mind that with a list of 54 students, the last page 
+         will only display four.
+      - Remember that the first student has an index of 0.
+      - Remember that a function `parameter` goes in the parens when 
+         you initially define the function, and it acts as a variable 
+         or a placeholder to represent the actual function `argument` 
+         that will be passed into the parens later when you call or 
+         "invoke" the function 
+   ***/
 
 
 
+   const showPage = (list, page) => {
+
+      const startIndex = (page * itemsPerPage) - itemsPerPage; 
+      const endIndex = page * itemsPerPage - 1;
+
+      for (let i = 0; i < list.length; i++) {
+         if (i >= startIndex && i <= endIndex) {
+            list[i].style.display = 'block';
+            console.log(i + " is displayed");
+         } else {
+            list[i].style.display = 'none';
+         }
+      }
+   }
+
+   /*** 
+      Create the `appendPageLinks function` to generate, append, and add 
+      functionality to the pagination buttons.
+   ***/
+
+   const appendPageLinks = (list) => {
+      const div = document.createElement('div');
+      div.className = 'pagination';
+
+      const ul = document.createElement('ul');
+      const pageCount = Math.ceil(list.length / itemsPerPage);
+      
+      document.querySelector('.page').appendChild(div);
+      div.appendChild(ul);
+
+      for (let i = 1; i <= pageCount; i++) {
+         let li = document.createElement('li');
+         li.innerHTML = `<a href="#">${[i]}</a>`;
+         ul.appendChild(li);
+      }
+
+      const links = document.querySelectorAll('.pagination a');
+
+      ul.firstElementChild.firstElementChild.className = 'active';
+
+      ul.addEventListener('click', (e) => {
+         e.preventDefault();
+         const clicked = e.target;
+         for (link of links) {
+            link.className = '';
+         }
+         clicked.className = 'active';
+      });
+   }
+
+   showPage(listItems, 1); 
+   appendPageLinks(listItems);
 
 
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
+});
