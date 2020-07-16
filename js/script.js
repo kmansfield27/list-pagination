@@ -8,48 +8,25 @@ FSJS project 2 - List Filter and Pagination
 document.addEventListener('DOMContentLoaded', () => {
 
 
-   /*** 
-      Add your global variables that store the DOM elements you will 
-      need to reference and/or manipulate. 
-      
-      But be mindful of which variables should be global and which 
-      should be locally scoped to one of the two main functions you're 
-      going to create. A good general rule of thumb is if the variable 
-      will only be used inside of a function, then it can be locally 
-      scoped to that function.
-   ***/
-
-   const listItems = document.getElementsByTagName('li');
+   // Set global variables
+   const listItems = document.querySelectorAll('.student-item');
    const itemsPerPage = 10;
 
-   console.log(listItems);
 
    /*** 
-      Create the `showPage` function to hide all of the items in the 
-      list except for the ten you want to show.
-
-      Pro Tips: 
-      - Keep in mind that with a list of 54 students, the last page 
-         will only display four.
-      - Remember that the first student has an index of 0.
-      - Remember that a function `parameter` goes in the parens when 
-         you initially define the function, and it acts as a variable 
-         or a placeholder to represent the actual function `argument` 
-         that will be passed into the parens later when you call or 
-         "invoke" the function 
+      Function to divide the list into pages. The function accepts a list 
+      and a page number as arguments. The list is an array that
+      is looped over. startIndex and endIndex are used to control 
+      which indices are displayed on the screen. As the page number is
+      changed, the displayed indices will adjust. 
    ***/
 
-
-
    const showPage = (list, page) => {
-
       const startIndex = (page * itemsPerPage) - itemsPerPage; 
       const endIndex = page * itemsPerPage - 1;
-
       for (let i = 0; i < list.length; i++) {
          if (i >= startIndex && i <= endIndex) {
-            list[i].style.display = 'block';
-            console.log(i + " is displayed");
+            list[i].style.display = '';
          } else {
             list[i].style.display = 'none';
          }
@@ -57,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
    }
 
    /*** 
-      Create the `appendPageLinks function` to generate, append, and add 
-      functionality to the pagination buttons.
+      Function to create the pagination buttons at the bottom of the screen.
+
    ***/
 
    const appendPageLinks = (list) => {
@@ -82,17 +59,78 @@ document.addEventListener('DOMContentLoaded', () => {
       ul.firstElementChild.firstElementChild.className = 'active';
 
       ul.addEventListener('click', (e) => {
-         e.preventDefault();
-         const clicked = e.target;
-         for (link of links) {
-            link.className = '';
+
+         if (e.target.tagName === 'A') {
+            //e.preventDefault();
+            const clicked = e.target;
+            for (link of links) {
+               link.className = '';
+            }
+            clicked.className = 'active';
+
+            const page = clicked.textContent;
+            showPage(listItems, page); 
          }
-         clicked.className = 'active';
       });
    }
 
+
+   /*
+      <div class="page-header cf">
+        <h2>Students</h2>
+        
+        <!-- student search HTML to add dynamically -->
+        <div class="student-search">
+          <input placeholder="Search for students...">
+          <button>Search</button>
+        </div>
+        <!-- end search -->
+
+      </div>
+   */
+
+   const appendSearch = () => {
+      const header = document.querySelector('.page-header');
+      const div = document.createElement('div');
+      div.className = 'student-search';
+      
+      const input = document.createElement('input');
+      input.placeholder = 'Search for students...';
+      
+      const button = document.createElement('button');
+      button.textContent = 'Search';
+
+      header.appendChild(div);
+      div.appendChild(input);
+      div.appendChild(button);
+   }
+   
+
    showPage(listItems, 1); 
    appendPageLinks(listItems);
+   appendSearch();
 
+   const input = document.querySelector('input');
+   const button = document.querySelector('button');
+
+   const searchList = (searchElement, list) => {
+      for (let i = 0; i <= list.length; i++) {
+         if ( searchElement.value.length !== 0 && 
+              list[i].textContent.toLowerCase().includes(searchElement.value.toLowerCase() ) ) {
+            
+            list[i].style.display = 'list-item';
+         } else {    
+            list[i].style.display = 'none';
+         }
+      }
+   }
+
+   button.addEventListener( 'click', (e) => {
+      searchList(input, listItems);
+   });
+
+   input.addEventListener( 'keyup', (e) => {
+      searchList(input, listItems);
+   });
 
 });
